@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>TankIt — Fuel tracking that stays on your phone</title>
+<meta name="description" content="A privacy-first iOS fuel tracker. On-device receipt scanning, live prices in Austria & France, and your fuel statistics — without ever leaving your iPhone." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<style>
+  /* Short page — three feature anchors only */
+  .hero-short { padding: 120px 0 96px; }
+  .hero-short h1 { font-size: clamp(56px, 8vw, 108px); line-height: 0.95; letter-spacing: -0.04em; max-width: 14ch; }
+  .hero-short h1 .accent { color: var(--accent); }
+  .hero-short .lede { font-size: clamp(18px, 1.6vw, 22px); color: var(--ink-muted); max-width: 56ch; margin: 28px 0 36px; line-height: 1.45; }
+  .hero-short .badges {
+    display: flex; flex-wrap: wrap; gap: 22px;
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--ink-faint); letter-spacing: 0.06em; text-transform: uppercase;
+    padding-top: 32px; border-top: 1px solid var(--border); margin-top: 52px;
+  }
+  .hero-short .badges .check { color: var(--accent); margin-right: 6px; }
+
+  /* Feature trio — alternating layout */
+  .feat-block {
+    padding: 96px 0;
+    border-top: 1px solid var(--border);
+  }
+  .feat-block .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .feat-block.reverse .row > .copy { order: 2; }
+  .feat-block.reverse .row > .art { order: 1; }
+  .feat-block .num {
+    font-family: var(--font-mono); font-size: 12px; color: var(--accent);
+    letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 22px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .feat-block .num::before { content: ""; width: 24px; height: 1px; background: var(--accent); }
+  .feat-block h2 {
+    font-size: clamp(36px, 4vw, 56px);
+    line-height: 1.02; letter-spacing: -0.02em;
+    margin-bottom: 22px; max-width: 16ch;
+  }
+  .feat-block h2 .accent { color: var(--accent); }
+  .feat-block .copy p {
+    font-size: 17.5px; color: var(--ink-muted); line-height: 1.55;
+    max-width: 50ch; margin-bottom: 16px;
+  }
+  .feat-block .copy strong { color: var(--ink); font-weight: 500; }
+  .feat-block ul.kv {
+    margin-top: 24px; padding: 0; list-style: none;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .feat-block ul.kv li {
+    display: grid; grid-template-columns: 22px 1fr;
+    gap: 12px; font-size: 15px; color: var(--ink-muted);
+  }
+  .feat-block ul.kv li::before {
+    content: ""; width: 14px; height: 14px;
+    border: 1px solid var(--accent); border-radius: 4px;
+    margin-top: 4px; background: rgba(212, 164, 39, 0.08);
+  }
+  .feat-block ul.kv li strong { color: var(--ink); font-weight: 500; }
+  @media (max-width: 900px) {
+    .feat-block .row { grid-template-columns: 1fr; gap: 40px; }
+    .feat-block.reverse .row > .copy,
+    .feat-block.reverse .row > .art { order: initial; }
+  }
+
+  /* Special: privacy block — darker tone */
+  .privacy-block { background: #08090b; }
+  .privacy-block .num { color: var(--accent); }
+  .privacy-pill {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 8px 14px; border: 1px solid var(--border-strong);
+    border-radius: 999px; font-family: var(--font-mono);
+    font-size: 11px; color: var(--ink-muted); letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 24px;
+  }
+  .privacy-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  /* Coverage tag pair (AT / FR) */
+  .country-tags { display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+  .country-tag {
+    border: 1px solid var(--border-strong);
+    border-radius: 12px; padding: 14px 18px; min-width: 140px;
+  }
+  .country-tag .flag {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .country-tag .src {
+    display: block; font-family: var(--font-mono); font-size: 12px;
+    color: var(--ink); margin-top: 6px;
+  }
+  .country-tag .src-sub {
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--ink-faint); margin-top: 2px; letter-spacing: 0.04em;
+  }
+
+  /* Stats inline display */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; margin-top: 28px;
+  }
+  .stats-row .stat {
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px; background: var(--bg-elev);
+  }
+  .stats-row .v {
+    font-family: var(--font-mono); font-size: 26px;
+    font-weight: 600; color: var(--accent);
+    letter-spacing: -0.01em;
+  }
+  .stats-row .l {
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--ink-muted); text-transform: uppercase;
+    letter-spacing: 0.08em; margin-top: 4px;
+  }
+  @media (max-width: 600px) { .stats-row { grid-template-columns: 1fr 1fr; } }
+
+  /* CTA */
+  .cta-short { padding: 120px 0; text-align: center; border-top: 1px solid var(--border); }
+  .cta-short h2 { font-size: clamp(36px, 4.5vw, 64px); line-height: 1.02; letter-spacing: -0.02em; }
+  .cta-short p { font-size: 17px; color: var(--ink-muted); max-width: 50ch; margin: 22px auto 36px; }
+
+  /* Media art frames — make sure they sit large in their column */
+  .feat-block .art .media { width: 100%; max-width: 480px; margin: 0 auto; }
+  .feat-block.center-art .art .media { max-width: 560px; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">T</span>
+      <span>TankIt</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#scan">Scan</a>
+      <a href="#prices">Prices</a>
+      <a href="#stats">Stats</a>
+      <a href="behind.html">Behind the build</a>
+      <a class="nav-cta" href="#download">Coming soon</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero-short">
+    <div class="wrap">
+      <span class="privacy-pill" style="margin-bottom: 36px;">
+        <span class="dot"></span>
+        <span>iOS · privacy-first · on-device AI</span>
+      </span>
+      <h1>Track your fuel.<br/><span class="accent">Not yourself.</span></h1>
+      <p class="lede">
+        TankIt scans your fuel receipts <strong>on-device</strong>, finds the cheapest pump nearby in Austria &amp; France, and turns every fill-up into clear statistics — without sending a single byte to a server.
+      </p>
+      <div class="hero-actions">
+        <span class="btn btn-primary" style="cursor:default;">
+          <span class="mono" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;">●&nbsp;Coming soon</span>
+          <span>iOS App Store</span>
+        </span>
+        <a class="btn btn-ghost" href="#scan">Why on-device?</a>
+      </div>
+      <div class="badges">
+        <span><span class="check">✓</span> on-device OCR &amp; LLM</span>
+        <span><span class="check">✓</span> no account</span>
+        <span><span class="check">✓</span> no tracking</span>
+        <span><span class="check">✓</span> AT &amp; FR</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01 · ON-DEVICE LLM RECEIPT SCANNING -->
+  <section class="feat-block privacy-block" id="scan">
+    <div class="wrap">
+      <div class="row">
+        <div class="copy">
+          <span class="num">01 · Privacy by design</span>
+          <h2>On-device AI reads your receipts. <span class="accent">Nothing else does.</span></h2>
+          <p>
+            Point the camera at any fuel receipt. Apple Vision pulls the text. An <strong>on-device language model</strong> structures it into volume, price per litre, total, fuel type, and date.
+          </p>
+          <p>
+            All of it runs on your iPhone&rsquo;s neural engine. The receipt photo is stored locally — never uploaded, never sent to any server, never seen by anyone but you.
+          </p>
+          <ul class="kv">
+            <li><span><strong>Zero cloud round-trips.</strong> The OCR and the LLM both run locally.</span></li>
+            <li><span><strong>No analytics, no SDKs.</strong> No third-party trackers. No accounts.</span></li>
+            <li><span><strong>Works offline.</strong> Scan a receipt with no signal — it still parses.</span></li>
+          </ul>
+        </div>
+        <div class="art">
+          <div class="media ar-3-4"><img src="assets/receipt_scan.gif" alt="On-device receipt scanning" onerror="this.remove()"/><span class="media-label">[ receipt_scan.gif ]</span>
+            <span class="media-tag">GIF</span>
+            <div class="media-center">
+              on-device scan loop
+              <span class="dim">camera → Vision OCR → on-device LLM → fields</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · NEARBY STATIONS -->
+  <section class="feat-block reverse" id="prices">
+    <div class="wrap">
+      <div class="row">
+        <div class="copy">
+          <span class="num">02 · Live prices</span>
+          <h2>The cheapest pump nearby. <span class="accent">Right now.</span></h2>
+          <p>
+            TankIt pulls fuel prices straight from <strong>official government registries</strong>. No middlemen, no scraped data, no &ldquo;estimated&rdquo; values — the same numbers the regulators publish.
+          </p>
+          <p>
+            Stations sorted by what you&rsquo;ll actually pay. One tap opens turn-by-turn navigation in Apple Maps.
+          </p>
+          <div class="country-tags">
+            <div class="country-tag">
+              <span class="flag">AT · Austria</span>
+              <span class="src">e-control.at</span>
+              <span class="src-sub">federal energy regulator</span>
+            </div>
+            <div class="country-tag">
+              <span class="flag">FR · France</span>
+              <span class="src">data.economie.gouv.fr</span>
+              <span class="src-sub">prix des carburants</span>
+            </div>
+          </div>
+        </div>
+        <div class="art">
+          <div class="media ar-3-4"><img src="assets/price_finder.gif" alt="Nearby fuel stations sorted by price" onerror="this.remove()"/><span class="media-label">[ price_finder.gif ]</span>
+            <span class="media-tag">GIF</span>
+            <div class="media-center">
+              nearby station list
+              <span class="dim">sorted ascending · € / L · live</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · STATISTICS -->
+  <section class="feat-block" id="stats">
+    <div class="wrap">
+      <div class="row">
+        <div class="copy">
+          <span class="num">03 · Statistics</span>
+          <h2>Your fuel, <span class="accent">in numbers that matter.</span></h2>
+          <p>
+            Every fill-up rolls into a clear picture: <strong>L/100 km</strong>, monthly spend, cost per kilometre, efficiency over time. Partial fills handled correctly — most apps don&rsquo;t.
+          </p>
+          <p>
+            Export the lot as CSV, plus a ZIP of every receipt photo, whenever you want. Your data has been on your phone the whole time. Take it with you, no questions asked.
+          </p>
+          <div class="stats-row">
+            <div class="stat"><div class="v">L/100&nbsp;km</div><div class="l">efficiency curve</div></div>
+            <div class="stat"><div class="v">€ / month</div><div class="l">spend tracking</div></div>
+            <div class="stat"><div class="v">€ / km</div><div class="l">true cost</div></div>
+          </div>
+        </div>
+        <div class="art">
+          <div class="media ar-3-4"><img src="assets/stats_dashboard.png" alt="Fuel statistics dashboard" onerror="this.remove()"/><span class="media-label">[ stats_dashboard.png ]</span>
+            <span class="media-tag">IMG</span>
+            <div class="media-center">
+              statistics dashboard
+              <span class="dim">L/100 km · € spend · cost/km · trend</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-short" id="download">
+    <div class="wrap-narrow">
+      <span class="eyebrow">Coming soon</span>
+      <h2 style="margin-top:18px;">Your receipts, in your pocket.<br/>Where they belong.</h2>
+      <p>TankIt is heading to the App Store. iOS 17 or later. No account needed — just open the app and scan.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;align-items:center;">
+        <span class="btn btn-primary" style="cursor:default;">
+          <span class="mono" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;">●&nbsp;In development</span>
+        </span>
+        <a class="btn btn-ghost" href="behind.html">Behind the build →</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="brand">
+        <span class="brand-mark">T</span>
+        <span style="font-size:14px;">TankIt</span>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Full site</a>
+        <a href="behind.html">Project</a>
+        <a href="mailto:hello@tankit.app">Contact</a>
+        <span class="mono">tankit.app</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

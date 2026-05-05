@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>TankIt — Behind the build</title>
+<meta name="description" content="A short walkthrough of how TankIt is built: on-device OCR, on-device LLM extraction, no cloud, two government price APIs." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<style>
+  .bb-hero { padding: 120px 0 64px; }
+  .bb-meta-row {
+    display: flex; gap: 28px; flex-wrap: wrap;
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--ink-faint); text-transform: uppercase;
+    letter-spacing: 0.12em; margin-bottom: 36px;
+  }
+  .bb-meta-row span strong { color: var(--ink); font-weight: 500; }
+  .bb-hero h1 { font-size: clamp(44px, 6vw, 80px); max-width: 18ch; margin-bottom: 28px; line-height: 1.02; letter-spacing: -0.02em; }
+  .bb-hero h1 .accent { color: var(--accent); }
+  .bb-hero .lede { font-size: 22px; color: var(--ink-muted); max-width: 60ch; line-height: 1.45; }
+  .bb-hero .lede strong { color: var(--ink); font-weight: 500; }
+
+  .layout {
+    display: grid; grid-template-columns: 220px 1fr;
+    gap: 64px; padding: 48px 0 120px; align-items: start;
+  }
+  .toc { position: sticky; top: 96px; border-left: 1px solid var(--border); padding-left: 20px; }
+  .toc-title {
+    font-family: var(--font-mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 18px;
+  }
+  .toc ol { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; }
+  .toc li { font-family: var(--font-mono); font-size: 12px; }
+  .toc li a {
+    display: grid; grid-template-columns: 30px 1fr; gap: 10px;
+    color: var(--ink-muted);
+    padding: 6px 8px; margin: 0 -8px;
+    border-radius: 6px;
+    transition: color 120ms ease, background 120ms ease;
+  }
+  .toc li a:hover { color: var(--ink); background: var(--bg-elev); }
+  .toc li a:hover .num { color: var(--accent); }
+  .toc .num { color: var(--ink-ghost); transition: color 120ms ease; }
+  @media (max-width: 1000px) {
+    .layout { grid-template-columns: 1fr; gap: 32px; }
+    .toc { position: static; border-left: none; border-top: 1px solid var(--border); padding-left: 0; padding-top: 24px; }
+    .toc ol { flex-direction: row; flex-wrap: wrap; gap: 8px 16px; }
+  }
+
+  .body { max-width: 760px; }
+  .body section.chunk { border-top: 1px solid var(--border); padding: 56px 0; }
+  .body section.chunk:first-of-type { border-top: none; padding-top: 0; }
+  .body h2 { font-size: 32px; margin-bottom: 22px; letter-spacing: -0.02em; }
+  .body h2 .num {
+    font-family: var(--font-mono); font-size: 14px; color: var(--accent);
+    margin-right: 14px; font-weight: 500; letter-spacing: 0.04em;
+  }
+  .body h3 { font-size: 19px; margin-top: 32px; margin-bottom: 12px; }
+  .body p { color: var(--ink-muted); font-size: 16.5px; margin-bottom: 16px; max-width: 70ch; line-height: 1.6; }
+  .body p strong { color: var(--ink); font-weight: 500; }
+  .body p code, .body li code {
+    font-family: var(--font-mono); font-size: 13px;
+    background: var(--bg-elev); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 5px; color: var(--ink);
+  }
+  .body ul { color: var(--ink-muted); padding-left: 18px; margin: 0 0 22px; font-size: 16px; line-height: 1.6; }
+  .body ul li { margin-bottom: 10px; }
+  .body ul li::marker { color: var(--accent); }
+  .body blockquote {
+    margin: 28px 0; padding: 20px 24px;
+    border-left: 2px solid var(--accent);
+    background: var(--bg-elev); border-radius: 0 var(--r-small) var(--r-small) 0;
+    font-size: 17px; color: var(--ink); font-family: var(--font-display); line-height: 1.4;
+  }
+
+  .pull {
+    margin: 32px 0; padding: 28px 32px;
+    border: 1px solid var(--border); border-radius: var(--r-card);
+    background: var(--bg-elev); font-family: var(--font-display);
+    font-size: 22px; line-height: 1.35; letter-spacing: -0.01em;
+  }
+  .pull .accent { color: var(--accent); }
+
+  .stat-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); border-radius: var(--r-card);
+    overflow: hidden; margin: 28px 0 8px;
+  }
+  .stat-row .stat { background: var(--bg); padding: 22px; }
+  .stat-row .v { font-family: var(--font-mono); font-size: 26px; font-weight: 600; color: var(--accent); }
+  .stat-row .l {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px;
+  }
+  @media (max-width: 700px) { .stat-row { grid-template-columns: 1fr 1fr; } }
+
+  .arch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 18px 0; }
+  .arch-card { border: 1px solid var(--border); border-radius: var(--r-card); padding: 20px; background: var(--bg-elev); }
+  .arch-card .lab {
+    font-family: var(--font-mono); font-size: 11px; color: var(--accent);
+    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;
+  }
+  .arch-card h4 { font-family: var(--font-display); font-size: 16px; margin: 0 0 6px; }
+  .arch-card p { color: var(--ink-muted); font-size: 13.5px; margin: 0; line-height: 1.5; }
+  .arch-card code {
+    font-family: var(--font-mono); font-size: 12px;
+    background: var(--bg); border: 1px solid var(--border);
+    padding: 1px 5px; border-radius: 4px; color: var(--ink);
+  }
+  @media (max-width: 700px) { .arch-grid { grid-template-columns: 1fr; } }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 24px; }
+  .chip {
+    font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);
+    border: 1px solid var(--border-strong); padding: 5px 10px;
+    border-radius: 999px; letter-spacing: 0.04em;
+  }
+  .chip.accent { color: var(--accent); border-color: var(--accent); }
+
+  /* Pipeline diagram, drawn with HTML/CSS */
+  .pipeline {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 8px; margin: 24px 0;
+  }
+  .pipeline .step {
+    border: 1px solid var(--border); border-radius: var(--r-small);
+    background: var(--bg-elev); padding: 14px;
+    position: relative;
+  }
+  .pipeline .step:not(:last-child)::after {
+    content: "→"; position: absolute;
+    right: -14px; top: 50%; transform: translateY(-50%);
+    color: var(--accent); font-family: var(--font-mono);
+    font-size: 14px; z-index: 1;
+  }
+  .pipeline .step .lab {
+    font-family: var(--font-mono); font-size: 9px;
+    color: var(--accent); letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 4px;
+  }
+  .pipeline .step .name { font-weight: 500; font-size: 14px; }
+  .pipeline .step .desc { color: var(--ink-muted); font-size: 11.5px; margin-top: 4px; line-height: 1.4; }
+  @media (max-width: 700px) {
+    .pipeline { grid-template-columns: 1fr; }
+    .pipeline .step:not(:last-child)::after {
+      content: "↓"; right: 50%; top: auto; bottom: -14px;
+      transform: translateX(50%);
+    }
+  }
+
+  /* Country routing pair */
+  .country-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0 8px; }
+  .country-pair .c {
+    border: 1px solid var(--border); border-radius: var(--r-card);
+    padding: 18px; background: var(--bg-elev);
+  }
+  .country-pair .flag {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--accent); letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .country-pair h4 { font-family: var(--font-display); font-size: 17px; margin: 0 0 8px; }
+  .country-pair .src {
+    display: block; font-family: var(--font-mono); font-size: 12px;
+    color: var(--ink); margin-top: 8px;
+    padding: 6px 10px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 5px;
+    word-break: break-all;
+  }
+  .country-pair p { font-size: 14px; margin: 0; }
+  @media (max-width: 700px) { .country-pair { grid-template-columns: 1fr; } }
+
+  section[id] { scroll-margin-top: 80px; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index_short.html">
+      <span class="brand-mark">T</span>
+      <span>TankIt</span>
+      <span class="mono" style="color:var(--ink-faint);font-size:12px;margin-left:6px;">/ behind the build</span>
+    </a>
+    <nav class="nav-links">
+      <a href="index_short.html">Landing</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#intelligence">On-device AI</a>
+      <a href="#apis">APIs</a>
+      <a class="nav-cta" href="index_short.html#download">Coming soon</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="bb-hero">
+    <div class="wrap">
+      <div class="bb-meta-row">
+        <span><strong>TankIt</strong></span>
+        <span>Role · Solo</span>
+        <span>Platform · iOS 17+</span>
+        <span>Stack · Swift 6 / SwiftUI</span>
+        <span>Year · 2026</span>
+      </div>
+      <span class="eyebrow">Behind the build</span>
+      <h1 style="margin-top:14px;">A fuel tracker that <span class="accent">never phones home.</span></h1>
+      <p class="lede">
+        TankIt scans receipts, finds the cheapest pump, and crunches your fuel statistics — and runs <strong>every piece of that intelligence on-device</strong>. The only network calls go to two government price registries. Here&rsquo;s how that&rsquo;s built.
+      </p>
+
+      <div class="chips" style="margin-top:32px;">
+        <span class="chip accent">Privacy by design</span>
+        <span class="chip">Apple Vision OCR</span>
+        <span class="chip">Foundation Models</span>
+        <span class="chip">Swift 6 strict concurrency</span>
+        <span class="chip">SwiftData</span>
+        <span class="chip">WidgetKit</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="layout">
+
+      <aside class="toc">
+        <div class="toc-title">Contents</div>
+        <ol>
+          <li><a href="#overview"><span class="num">01</span><span>Overview</span></a></li>
+          <li><a href="#privacy"><span class="num">02</span><span>Privacy</span></a></li>
+          <li><a href="#intelligence"><span class="num">03</span><span>On-device AI</span></a></li>
+          <li><a href="#apis"><span class="num">04</span><span>External APIs</span></a></li>
+          <li><a href="#stack"><span class="num">05</span><span>Tech stack</span></a></li>
+          <li><a href="#architecture"><span class="num">06</span><span>Architecture</span></a></li>
+          <li><a href="#platform"><span class="num">07</span><span>Platform</span></a></li>
+        </ol>
+      </aside>
+
+      <article class="body">
+
+        <section class="chunk" id="overview">
+          <h2><span class="num">01</span>Overview</h2>
+          <p>TankIt is a personal fuel management app for drivers in <strong>Austria and France</strong>. The core loop is simple: snap a photo of a fuel receipt, let the app read it automatically, and watch your history, efficiency, and spending build up over time.</p>
+          <p>On top of that, a <strong>real-time price finder</strong> surfaces the cheapest station near you, and home screen widgets bring key numbers to a glance.</p>
+
+          <blockquote>
+            A privacy-first iOS app that turns fuel receipts into spending insights, finds the cheapest nearby station in real time, and stays out of the cloud.
+          </blockquote>
+
+          <div class="stat-row">
+            <div class="stat"><div class="v">0</div><div class="l">third-party SDKs</div></div>
+            <div class="stat"><div class="v">100%</div><div class="l">on-device ML</div></div>
+            <div class="stat"><div class="v">2</div><div class="l">countries supported</div></div>
+            <div class="stat"><div class="v">4</div><div class="l">widget variants</div></div>
+          </div>
+        </section>
+
+        <section class="chunk" id="privacy">
+          <h2><span class="num">02</span>Privacy</h2>
+          <p>Privacy isn&rsquo;t a feature, it&rsquo;s a constraint that shapes every other decision. Concretely:</p>
+          <ul>
+            <li>All ML inference (OCR, rectangle detection, LLM extraction) runs <strong>entirely on-device</strong>.</li>
+            <li><strong>No analytics SDK, no crash reporter</strong> that phones home, no user accounts.</li>
+            <li>Receipt images are stored locally on your iPhone, <strong>never transmitted</strong>.</li>
+            <li>The only network calls leave the device for the two government price APIs — and only your GPS coordinate goes with them.</li>
+            <li>You can export the entire dataset (CSV + ZIP of receipts) at any time. Nothing to lock in.</li>
+          </ul>
+
+          <div class="pull">
+            We physically can&rsquo;t see your data <span class="accent">because it never leaves your phone.</span>
+          </div>
+        </section>
+
+        <section class="chunk" id="intelligence">
+          <h2><span class="num">03</span>On-device intelligence</h2>
+
+          <h3>OCR — Apple Vision framework</h3>
+          <p><code>VNRecognizeTextRequest</code> runs at <code>.accurate</code> level, with language correction tuned per use case:</p>
+          <ul>
+            <li><strong>Receipt text</strong> → language correction enabled, languages <code>["fr-FR", "de-AT", "en-US"]</code>.</li>
+            <li><strong>Odometer photos</strong> → language correction disabled so digit sequences aren&rsquo;t mangled into words.</li>
+          </ul>
+
+          <h3>Structured extraction — LLM + regex pipeline</h3>
+          <p>After OCR produces raw text, <code>ExtractionService</code> runs a two-stage pipeline:</p>
+          <ul>
+            <li><strong>LLM path (iOS 26+):</strong> Apple&rsquo;s <code>FoundationModels</code> framework (<code>LanguageModelSession</code>) with a <code>@Generable</code> structured output type — the on-device model returns typed fields directly, no string parsing. <code>@Guide</code> annotations steer each field toward the expected format.</li>
+            <li><strong>Regex fallback:</strong> A hand-crafted multilingual parser for receipts from French, Austrian, and German stations — covering labelled patterns (<code>Prix/L</code>, <code>Preis/L</code>, <code>GESAMTSUMME</code>, <code>NET À PAYER</code>) and free-form layouts. A derived-value step closes the price triangle: if any one of {total, volume, price/L} is missing but the other two are present, it calculates the third.</li>
+          </ul>
+
+          <div class="pipeline">
+            <div class="step">
+              <div class="lab">step 01</div>
+              <div class="name">Camera</div>
+              <div class="desc">Capture receipt photo</div>
+            </div>
+            <div class="step">
+              <div class="lab">step 02</div>
+              <div class="name">Vision OCR</div>
+              <div class="desc">Local text recognition</div>
+            </div>
+            <div class="step">
+              <div class="lab">step 03</div>
+              <div class="name">On-device LLM</div>
+              <div class="desc">@Generable typed fields</div>
+            </div>
+            <div class="step">
+              <div class="lab">step 04</div>
+              <div class="name">SwiftData</div>
+              <div class="desc">Local persistence only</div>
+            </div>
+          </div>
+
+          <div class="pull">
+            Nothing leaves the device. <span class="accent">No API call, no cloud function</span> — the entire extraction runs locally in under a second.
+          </div>
+
+          <h3>Receipt image correction</h3>
+          <p><code>ReceiptCorrectionView</code> wraps <code>VNDetectRectanglesRequest</code> to find the receipt boundary, then applies a perspective warp. Available both immediately after scanning and retrospectively from the fill history.</p>
+        </section>
+
+        <section class="chunk" id="apis">
+          <h2><span class="num">04</span>External APIs</h2>
+          <p>The only outbound traffic from TankIt: two <strong>official government fuel price registries</strong>. No third-party data brokers, no scraping.</p>
+
+          <div class="country-pair">
+            <div class="c">
+              <span class="flag">AT · Austria</span>
+              <h4>e-control.at</h4>
+              <p>Federal energy regulator&rsquo;s public price API. Internal fuel codes (<code>E95</code>, <code>Diesel</code>, <code>LPG</code>) map to <code>SUP</code>, <code>DIE</code>, <code>GAS</code>.</p>
+              <span class="src">api.e-control.at/sprit/1.0/search/gas-stations/by-address</span>
+            </div>
+            <div class="c">
+              <span class="flag">FR · France</span>
+              <h4>data.economie.gouv.fr</h4>
+              <p>French government&rsquo;s open fuel-price dataset, queried via ODS v2.1 spatial filter — up to 20 stations within 5 km in one request.</p>
+              <span class="src">data.economie.gouv.fr/api/explore/v2.1/…/prix-des-carburants-en-france-flux-instantane-v2</span>
+            </div>
+          </div>
+
+          <h3>Routing — <code>FuelPriceRouter</code></h3>
+          <p>A shared router abstracts both APIs behind a single <code>fetch(coordinate:countryCode:fuelType:)</code> call. It:</p>
+          <ul>
+            <li>Auto-detects the relevant country from GPS coordinates.</li>
+            <li>Caches results for 10 minutes with a ~1 km grid quantisation key.</li>
+            <li>Persists the cheapest station to the App Group <code>UserDefaults</code> so widgets always show fresh data without their own network call.</li>
+            <li>Triggers a <code>WidgetCenter.shared.reloadTimelines</code> after each successful fetch.</li>
+          </ul>
+
+          <h3>Apple Maps — navigation deep-link</h3>
+          <p>The price finder uses <code>maps://?daddr=lat,lon&amp;dirflg=d</code> to open turn-by-turn navigation with zero additional SDK dependencies.</p>
+        </section>
+
+        <section class="chunk" id="stack">
+          <h2><span class="num">05</span>Tech stack</h2>
+
+          <h3>Language &amp; UI</h3>
+          <ul>
+            <li><strong>Swift 6</strong> — strict concurrency throughout (<code>@MainActor</code>, <code>Sendable</code>, structured tasks).</li>
+            <li><strong>SwiftUI</strong> — 100% declarative UI; the only UIKit view controller is the camera viewfinder.</li>
+            <li><strong>WidgetKit</strong> — four widget types (small + medium for both price finder and efficiency).</li>
+          </ul>
+
+          <h3>Persistence</h3>
+          <ul>
+            <li><strong>SwiftData</strong> — model layer (<code>FuelEntry</code>, <code>Vehicle</code>) with <code>@Model</code> annotations, relationship rules, and reverse-index queries.</li>
+            <li><strong>UserDefaults (App Group)</strong> — shared container <code>group.com.tankit.app</code> for passing live data between the main app and widgets without a server round-trip.</li>
+          </ul>
+
+          <h3>Intelligence</h3>
+          <ul>
+            <li><strong>Apple Vision</strong> — on-device OCR &amp; rectangle detection.</li>
+            <li><strong>FoundationModels</strong> — on-device LLM for structured field extraction (iOS 26+).</li>
+            <li><strong>StoreKit 2</strong> — modern transaction-listener subscription model.</li>
+          </ul>
+        </section>
+
+        <section class="chunk" id="architecture">
+          <h2><span class="num">06</span>Architecture highlights</h2>
+
+          <div class="arch-grid">
+            <div class="arch-card">
+              <div class="lab">01 · Privacy by design</div>
+              <h4>Everything stays on device</h4>
+              <p>All ML inference (OCR, rectangle detection, LLM extraction) runs entirely on-device. No analytics SDK, no crash reporter that phones home, no user accounts.</p>
+            </div>
+            <div class="arch-card">
+              <div class="lab">02 · StoreKit 2</div>
+              <h4>Subscriptions, the modern way</h4>
+              <p><code>SubscriptionService</code> uses <code>Product.products(for:)</code>, <code>Transaction.currentEntitlements</code>, and a <code>Transaction.updates</code> listener for real-time entitlement changes.</p>
+            </div>
+            <div class="arch-card">
+              <div class="lab">03 · Math correctness</div>
+              <h4>Partial-fill efficiency</h4>
+              <p>A common bug in fuel trackers: partial fills break L/100 km calculations. <code>efficiencyPairs(from:)</code> accumulates volumes across consecutive partial fills and only closes the cycle at the next full fill.</p>
+            </div>
+            <div class="arch-card">
+              <div class="lab">04 · ZIP export</div>
+              <h4>No third-party archiver</h4>
+              <p><code>ExportService</code> ships a hand-written ZIP builder (STORED method, no compression) in ~80 lines of pure Swift. JPEGs are already compressed — STORED keeps it dependency-free.</p>
+            </div>
+            <div class="arch-card">
+              <div class="lab">05 · App Group bridge</div>
+              <h4>Widgets stay fresh</h4>
+              <p>The router persists the cheapest station to the App Group <code>UserDefaults</code>, then calls <code>WidgetCenter.shared.reloadTimelines</code>. Widgets render fresh data without making their own network request.</p>
+            </div>
+            <div class="arch-card">
+              <div class="lab">06 · Caching</div>
+              <h4>Quiet on the network</h4>
+              <p>Price queries are cached for 10 minutes against a quantised ~1 km grid key. Same neighbourhood, same fuel, no duplicate request.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="chunk" id="platform">
+          <h2><span class="num">07</span>Platform &amp; requirements</h2>
+          <ul>
+            <li><strong>iOS 17+</strong> (iOS 26+ unlocks the on-device LLM extraction path).</li>
+            <li><strong>Xcode 16 / Swift 6</strong>.</li>
+            <li>Location permission for price finder (optional — manual address search available).</li>
+            <li>Camera permission for receipt scanning (optional — manual entry available).</li>
+          </ul>
+        </section>
+
+      </article>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="brand">
+        <span class="brand-mark">T</span>
+        <span style="font-size:14px;">TankIt</span>
+      </div>
+      <div class="footer-links">
+        <a href="index_short.html">Landing</a>
+        <a href="#privacy">Privacy</a>
+        <a href="mailto:hello@tankit.app">Contact</a>
+        <span class="mono">tankit.app/behind</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
