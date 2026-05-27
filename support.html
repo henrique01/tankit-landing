@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>TankIt — Support</title>
+<meta name="description" content="Help, troubleshooting and FAQ for TankIt, the privacy-first iOS fuel tracker." />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<style>
+  section[id] { scroll-margin-top: 80px; }
+  .prose details {
+    border-top: 1px solid var(--border);
+    padding: 18px 0;
+  }
+  .prose details:first-of-type { border-top: none; }
+  .prose details > summary {
+    list-style: none;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 16.5px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 4px 0;
+  }
+  .prose details > summary::-webkit-details-marker { display: none; }
+  .prose details > summary::after {
+    content: "+";
+    font-family: var(--font-mono);
+    font-size: 18px;
+    color: var(--accent);
+    transition: transform 180ms ease;
+  }
+  .prose details[open] > summary::after {
+    content: "−";
+    transform: rotate(0deg);
+  }
+  .prose details > div {
+    padding: 8px 0 4px;
+  }
+  .prose details > div p { margin-top: 8px; }
+  .prose details > div p:first-child { margin-top: 0; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">
+        <svg viewBox="0 0 212 221" aria-hidden="true">
+          <g transform="translate(0 221) scale(0.1 -0.1)">
+            <path d="M1420 1904 c-530 -103 -743 -144 -1042 -201 -109 -20 -198 -41 -198 -46 0 -4 8 -6 18 -3 35 10 997 18 987 8 -5 -5 -100 -76 -210 -156 -110 -81 -210 -155 -222 -164 l-22 -17 266 -558 c146 -306 267 -556 268 -555 3 3 -29 181 -135 761 -34 186 -59 344 -57 351 3 8 71 65 152 127 81 63 264 206 408 318 144 112 268 206 275 208 13 5 17 24 5 22 -5 0 -226 -43 -493 -95z"/>
+          </g>
+        </svg>
+      </span>
+      <span>TankIt</span>
+      <span class="mono" style="color:var(--ink-faint);font-size:12px;margin-left:6px;">/ support</span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">Landing</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="behind.html">Behind the build</a>
+      <a class="nav-cta" href="mailto:tankit@tankit.app">Email us</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <article class="prose">
+      <span class="eyebrow">Support</span>
+      <h1 style="margin-top:14px;">Help &amp; <span class="accent">how-to.</span></h1>
+      <p class="lede">
+        A short page covering the things people most often ask. If something here doesn't fit
+        your situation, send a note to <a href="mailto:tankit@tankit.app">tankit@tankit.app</a>.
+      </p>
+
+      <div class="callout">
+        TankIt is built by a solo developer. Replies usually arrive within a few days — sometimes faster, occasionally slower.
+      </div>
+
+      <div class="toc">
+        <div class="toc-title">Contents</div>
+        <ol>
+          <li><a href="#start"><span class="num">01</span>Getting started</a></li>
+          <li><a href="#scan"><span class="num">02</span>Scanning receipts</a></li>
+          <li><a href="#prices"><span class="num">03</span>Price finder</a></li>
+          <li><a href="#carplay"><span class="num">04</span>CarPlay &amp; widgets</a></li>
+          <li><a href="#data"><span class="num">05</span>Your data</a></li>
+          <li><a href="#faq"><span class="num">06</span>FAQ</a></li>
+          <li><a href="#contact"><span class="num">07</span>Contact</a></li>
+        </ol>
+      </div>
+
+      <section id="start">
+        <h2><span class="num">01</span>Getting started</h2>
+        <p>
+          Once TankIt is installed on your iPhone, the first run takes about a minute:
+        </p>
+        <ol>
+          <li>Open the app — no account, no sign-in.</li>
+          <li>Grant <strong>camera</strong> access when prompted, so you can scan receipts.</li>
+          <li>Grant <strong>location</strong> access (while using the app), so the price finder can show stations near you.</li>
+          <li>Scan your first receipt: hit the camera button, fill the frame with the paper, hold steady. The app finds the receipt edges and auto-corrects perspective.</li>
+          <li>Review the extracted fields (volume, total, price per litre, station, date), correct anything that's off, save.</li>
+        </ol>
+        <p>
+          Both permissions are optional — you can still enter fills manually and search stations by address if you'd rather not grant them.
+        </p>
+      </section>
+
+      <section id="scan">
+        <h2><span class="num">02</span>Scanning receipts</h2>
+        <h3>The scan didn't pick up the right numbers</h3>
+        <p>
+          Every extracted field is editable on the confirm screen. Tap the value, fix it, save.
+          The original photo stays attached to the entry, so you can always re-open and check.
+        </p>
+        <h3>The whole receipt didn't scan</h3>
+        <p>
+          Try again with even, diffuse light and no shadow across the printed area. Crumpled
+          paper is fine; folds across the totals line are harder. If the receipt is thermal-paper
+          faded, manual entry is faster than fighting the OCR.
+        </p>
+        <h3>I already have a photo of the receipt</h3>
+        <p>
+          From any app that handles photos (Photos, Files, Messages, Mail), use the iOS share
+          sheet and pick <strong>"Scan with Tankit"</strong>. The app opens with the photo
+          pre-loaded.
+        </p>
+        <h3>Re-cropping after the fact</h3>
+        <p>
+          From the fill history, open an entry and tap the receipt photo — you can re-run the
+          rectangle detection and perspective correction at any time.
+        </p>
+      </section>
+
+      <section id="prices">
+        <h2><span class="num">03</span>Price finder</h2>
+        <h3>The list is empty</h3>
+        <p>
+          Two things to check first:
+        </p>
+        <ul>
+          <li>Location services are on for TankIt (iOS Settings → Privacy &amp; Security → Location Services → TankIt → "While Using the App").</li>
+          <li>You're in a supported country. At launch TankIt covers <strong>Austria</strong> and <strong>France</strong>. Other countries will return no results until we add them.</li>
+        </ul>
+        <h3>The cheapest station I see in the app and on its sign don't match</h3>
+        <p>
+          TankIt shows the prices that the operator submitted to the national registry. Pump
+          prices can change between updates, and some stations post slower than others. The
+          government feeds are the source of truth — if a station's pricing isn't current,
+          it's an issue with their reporting.
+        </p>
+        <h3>I tapped "navigate" but nothing happened</h3>
+        <p>
+          TankIt opens Apple Maps for directions. Make sure Apple Maps is installed (it's a
+          system app and can't normally be removed, but on some managed devices it is).
+        </p>
+      </section>
+
+      <section id="carplay">
+        <h2><span class="num">04</span>CarPlay &amp; widgets</h2>
+        <h3>TankIt doesn't appear on my CarPlay screen</h3>
+        <p>
+          In CarPlay, tap the app grid and look for TankIt. If it's missing, go to iOS Settings
+          → General → CarPlay → [your car] → Customize, and drag TankIt into the visible apps
+          list.
+        </p>
+        <h3>The widget shows old data</h3>
+        <p>
+          Widgets refresh on iOS's schedule, but they're seeded fresh every time you open the
+          app. If a widget feels stale, opening TankIt once will update it. Widgets also rely
+          on having recent location data — using the app or the price finder near where you
+          want the widget to be accurate is the fastest way to refresh.
+        </p>
+      </section>
+
+      <section id="data">
+        <h2><span class="num">05</span>Your data</h2>
+        <h3>Export</h3>
+        <p>
+          From the app's Settings screen you can export:
+        </p>
+        <ul>
+          <li>A <strong>CSV</strong> file with every fill-up.</li>
+          <li>A <strong>ZIP</strong> archive containing the CSV plus every receipt photo.</li>
+        </ul>
+        <p>
+          You can share the file through the iOS share sheet — AirDrop it to your Mac, save to
+          Files, email it, whatever fits.
+        </p>
+        <h3>Backup</h3>
+        <p>
+          Because everything is stored locally, your TankIt data is backed up wherever your
+          iPhone is backed up — iCloud or your computer. Restoring an iPhone backup brings
+          TankIt's data back with it.
+        </p>
+        <h3>Deletion</h3>
+        <p>
+          Delete the TankIt app. iOS removes the local database, the App Group container, and
+          all receipt photos. There's no server to wipe.
+        </p>
+      </section>
+
+      <section id="faq">
+        <h2><span class="num">06</span>FAQ</h2>
+
+        <details>
+          <summary>Which countries does TankIt support?</summary>
+          <div>
+            <p>At launch: <strong>Austria</strong> and <strong>France</strong>. We use each country's official government fuel-price feed; adding a new country means wiring up a new feed. More are planned.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Is there an Android version?</summary>
+          <div>
+            <p>No. TankIt is iPhone only. A lot of what makes it good — on-device receipt parsing, CarPlay, native widgets, Apple Maps integration — leans on Apple-only frameworks.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Do I need an account?</summary>
+          <div>
+            <p>No. There is no sign-in, no email collection, nothing to remember. Open the app and use it.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Does it work offline?</summary>
+          <div>
+            <p>Yes — receipt scanning, entry, and statistics work fully offline. The price finder needs a network connection to query the government feeds.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>What iOS version do I need?</summary>
+          <div>
+            <p>iOS 18 or later, iPhone only.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Does the app track me or sell my data?</summary>
+          <div>
+            <p>No. There are no analytics SDKs, no advertising IDs, no third-party trackers. The only network calls go to two government price registries, with your GPS coordinate. See the <a href="privacy.html">privacy policy</a> for the full picture.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>Can I track more than one car?</summary>
+          <div>
+            <p>The first version of TankIt is built for one vehicle. Multi-vehicle support is on the roadmap as a premium feature.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>How does it handle partial fills?</summary>
+          <div>
+            <p>Properly. A common bug in fuel apps is that a partial fill breaks the L/100 km calculation for that period. TankIt accumulates volumes across consecutive partial fills and only closes the efficiency cycle at the next full fill.</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>I found a bug / I have a feature idea.</summary>
+          <div>
+            <p>Excellent — email <a href="mailto:tankit@tankit.app">tankit@tankit.app</a> with as much detail as you can. Screenshots help, version number helps, and so does "what I was doing right before it happened."</p>
+          </div>
+        </details>
+      </section>
+
+      <section id="contact">
+        <h2><span class="num">07</span>Contact</h2>
+        <p>
+          <a href="mailto:tankit@tankit.app">tankit@tankit.app</a>
+        </p>
+        <p>
+          TankIt is a solo project. Replies arrive when they arrive, but every email gets read.
+        </p>
+      </section>
+
+      <div class="meta">
+        <strong>Last updated:</strong> 2026-05-27
+      </div>
+    </article>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 212 221" aria-hidden="true">
+            <g transform="translate(0 221) scale(0.1 -0.1)">
+              <path d="M1420 1904 c-530 -103 -743 -144 -1042 -201 -109 -20 -198 -41 -198 -46 0 -4 8 -6 18 -3 35 10 997 18 987 8 -5 -5 -100 -76 -210 -156 -110 -81 -210 -155 -222 -164 l-22 -17 266 -558 c146 -306 267 -556 268 -555 3 3 -29 181 -135 761 -34 186 -59 344 -57 351 3 8 71 65 152 127 81 63 264 206 408 318 144 112 268 206 275 208 13 5 17 24 5 22 -5 0 -226 -43 -493 -95z"/>
+            </g>
+          </svg>
+        </span>
+        <span style="font-size:14px;">TankIt</span>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Landing</a>
+        <a href="behind.html">Behind the build</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="mailto:tankit@tankit.app">Contact</a>
+        <span class="mono">tankit.app/support</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

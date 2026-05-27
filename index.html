@@ -4,13 +4,14 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>TankIt — Fuel tracking that stays on your phone</title>
-<meta name="description" content="A privacy-first iOS fuel tracker. On-device receipt scanning, live prices in Austria & France, and your fuel statistics — without ever leaving your iPhone." />
+<meta name="description" content="A privacy-first iOS fuel tracker. On-device receipt scanning, live prices in Austria & France, CarPlay, widgets, and clear fuel stats — without ever leaving your iPhone." />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css" />
 <style>
-  /* Short page — three feature anchors only */
+  /* Hero */
   .hero-short { padding: 120px 0 96px; }
   .hero-short h1 { font-size: clamp(56px, 8vw, 108px); line-height: 0.95; letter-spacing: -0.04em; max-width: 14ch; }
   .hero-short h1 .accent { color: var(--accent); }
@@ -22,6 +23,7 @@
     padding-top: 32px; border-top: 1px solid var(--border); margin-top: 52px;
   }
   .hero-short .badges .check { color: var(--accent); margin-right: 6px; }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
 
   /* Feature trio — alternating layout */
   .feat-block {
@@ -125,14 +127,33 @@
   }
   @media (max-width: 600px) { .stats-row { grid-template-columns: 1fr 1fr; } }
 
+  /* "What's inside" grid (Block 05) */
+  .inside-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 14px; margin-top: 28px;
+  }
+  .inside-grid .item {
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 20px; background: var(--bg-elev);
+  }
+  .inside-grid .item .t {
+    font-family: var(--font-display); font-weight: 500;
+    font-size: 15px; color: var(--ink); margin-bottom: 4px;
+  }
+  .inside-grid .item .d {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--ink-muted); letter-spacing: 0.04em;
+  }
+  @media (max-width: 600px) { .inside-grid { grid-template-columns: 1fr; } }
+
   /* CTA */
   .cta-short { padding: 120px 0; text-align: center; border-top: 1px solid var(--border); }
   .cta-short h2 { font-size: clamp(36px, 4.5vw, 64px); line-height: 1.02; letter-spacing: -0.02em; }
   .cta-short p { font-size: 17px; color: var(--ink-muted); max-width: 50ch; margin: 22px auto 36px; }
 
   /* Media art frames — make sure they sit large in their column */
-  .feat-block .art .media { width: 100%; max-width: 480px; margin: 0 auto; }
-  .feat-block.center-art .art .media { max-width: 560px; }
+  .feat-block .art .media { width: 100%; max-width: 380px; margin: 0 auto; }
+  .feat-block.carplay-block .art .media { max-width: 560px; }
 </style>
 </head>
 <body>
@@ -140,13 +161,20 @@
 <header class="nav">
   <div class="nav-inner">
     <a class="brand" href="index.html">
-      <span class="brand-mark">T</span>
+      <span class="brand-mark">
+        <svg viewBox="0 0 212 221" aria-hidden="true">
+          <g transform="translate(0 221) scale(0.1 -0.1)">
+            <path d="M1420 1904 c-530 -103 -743 -144 -1042 -201 -109 -20 -198 -41 -198 -46 0 -4 8 -6 18 -3 35 10 997 18 987 8 -5 -5 -100 -76 -210 -156 -110 -81 -210 -155 -222 -164 l-22 -17 266 -558 c146 -306 267 -556 268 -555 3 3 -29 181 -135 761 -34 186 -59 344 -57 351 3 8 71 65 152 127 81 63 264 206 408 318 144 112 268 206 275 208 13 5 17 24 5 22 -5 0 -226 -43 -493 -95z"/>
+          </g>
+        </svg>
+      </span>
       <span>TankIt</span>
     </a>
     <nav class="nav-links">
       <a href="#scan">Scan</a>
       <a href="#prices">Prices</a>
       <a href="#stats">Stats</a>
+      <a href="#carplay">CarPlay</a>
       <a href="behind.html">Behind the build</a>
       <a class="nav-cta" href="#download">Coming soon</a>
     </nav>
@@ -177,6 +205,8 @@
         <span><span class="check">✓</span> on-device OCR &amp; LLM</span>
         <span><span class="check">✓</span> no account</span>
         <span><span class="check">✓</span> no tracking</span>
+        <span><span class="check">✓</span> CarPlay</span>
+        <span><span class="check">✓</span> widgets</span>
         <span><span class="check">✓</span> AT &amp; FR</span>
       </div>
     </div>
@@ -190,7 +220,7 @@
           <span class="num">01 · Privacy by design</span>
           <h2>On-device AI reads your receipts. <span class="accent">Nothing else does.</span></h2>
           <p>
-            Point the camera at any fuel receipt. Apple Vision pulls the text. An <strong>on-device language model</strong> structures it into volume, price per litre, total, fuel type, and date.
+            Point the camera at any fuel receipt. Apple Vision pulls the text. Apple&rsquo;s <strong>on-device Foundation Models</strong> structure it into volume, price per litre, total, fuel type, and date — even on crumpled or angled paper.
           </p>
           <p>
             All of it runs on your iPhone&rsquo;s neural engine. The receipt photo is stored locally — never uploaded, never sent to any server, never seen by anyone but you.
@@ -202,12 +232,8 @@
           </ul>
         </div>
         <div class="art">
-          <div class="media ar-3-4"><img src="assets/receipt_scan.gif" alt="On-device receipt scanning" onerror="this.remove()"/><span class="media-label">[ receipt_scan.gif ]</span>
-            <span class="media-tag">GIF</span>
-            <div class="media-center">
-              on-device scan loop
-              <span class="dim">camera → Vision OCR → on-device LLM → fields</span>
-            </div>
+          <div class="media ar-phone phone-shot">
+            <img src="assets/screenshots/03-scan.png" alt="Receipt scan in TankIt" />
           </div>
         </div>
       </div>
@@ -241,12 +267,8 @@
           </div>
         </div>
         <div class="art">
-          <div class="media ar-3-4"><img src="assets/price_finder.gif" alt="Nearby fuel stations sorted by price" onerror="this.remove()"/><span class="media-label">[ price_finder.gif ]</span>
-            <span class="media-tag">GIF</span>
-            <div class="media-center">
-              nearby station list
-              <span class="dim">sorted ascending · € / L · live</span>
-            </div>
+          <div class="media ar-phone phone-shot">
+            <img src="assets/screenshots/02-finder.png" alt="Nearby fuel stations sorted by price" />
           </div>
         </div>
       </div>
@@ -273,12 +295,82 @@
           </div>
         </div>
         <div class="art">
-          <div class="media ar-3-4"><img src="assets/stats_dashboard.png" alt="Fuel statistics dashboard" onerror="this.remove()"/><span class="media-label">[ stats_dashboard.png ]</span>
-            <span class="media-tag">IMG</span>
-            <div class="media-center">
-              statistics dashboard
-              <span class="dim">L/100 km · € spend · cost/km · trend</span>
+          <div class="media ar-phone phone-shot">
+            <img src="assets/screenshots/04-insights.png" alt="Fuel statistics in TankIt" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · CARPLAY -->
+  <section class="feat-block reverse carplay-block privacy-block" id="carplay">
+    <div class="wrap">
+      <div class="row">
+        <div class="copy">
+          <span class="num">04 · CarPlay</span>
+          <h2>In the car, <span class="accent">hands-free.</span></h2>
+          <p>
+            A clean CarPlay surface puts the cheapest nearby pumps and a live map right on your dashboard — so you can see prices without unlocking your phone.
+          </p>
+          <p>
+            Tap a station, get turn-by-turn directions. Same data, same on-device logic, none of the cloud baggage.
+          </p>
+          <ul class="kv">
+            <li><span><strong>Live cheapest list.</strong> Same registries the finder uses.</span></li>
+            <li><span><strong>Map + side panel.</strong> Native <code style="font-family:var(--font-mono);font-size:13px;background:var(--bg-elev);padding:1px 6px;border-radius:5px;">CPPointOfInterestTemplate</code>.</span></li>
+            <li><span><strong>One tap to navigate.</strong> Hands stay on the wheel.</span></li>
+          </ul>
+        </div>
+        <div class="art">
+          <div class="media ar-carplay">
+            <img src="assets/screenshots/05-carplay.png" alt="TankIt running on CarPlay with a map and cheapest-station list" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · WHAT'S INSIDE -->
+  <section class="feat-block" id="more">
+    <div class="wrap">
+      <div class="row">
+        <div class="copy">
+          <span class="num">05 · What&rsquo;s inside</span>
+          <h2>The other things <span class="accent">you&rsquo;ll actually use.</span></h2>
+          <p>
+            A short list of the rest. Nothing here is a checkbox — everything ships in v1.
+          </p>
+          <div class="inside-grid">
+            <div class="item">
+              <div class="t">Home &amp; Lock Screen widgets</div>
+              <div class="d">cheapest nearby · weekly spend</div>
             </div>
+            <div class="item">
+              <div class="t">Share-to-scan</div>
+              <div class="d">receipt photo from Files / Messages</div>
+            </div>
+            <div class="item">
+              <div class="t">CSV &amp; ZIP export</div>
+              <div class="d">full history · receipt photos</div>
+            </div>
+            <div class="item">
+              <div class="t">Localised</div>
+              <div class="d">English · Deutsch · Français</div>
+            </div>
+            <div class="item">
+              <div class="t">Odometer tracking</div>
+              <div class="d">L/100 km, automatic</div>
+            </div>
+            <div class="item">
+              <div class="t">Manual entry</div>
+              <div class="d">when you don&rsquo;t have the receipt</div>
+            </div>
+          </div>
+        </div>
+        <div class="art">
+          <div class="media ar-phone phone-shot">
+            <img src="assets/screenshots/01-home.png" alt="TankIt home screen" />
           </div>
         </div>
       </div>
@@ -290,7 +382,7 @@
     <div class="wrap-narrow">
       <span class="eyebrow">Coming soon</span>
       <h2 style="margin-top:18px;">Your receipts, in your pocket.<br/>Where they belong.</h2>
-      <p>TankIt is heading to the App Store. iOS 17 or later. No account needed — just open the app and scan.</p>
+      <p>TankIt is heading to the App Store. iOS 18 or later, iPhone only. No account needed — just open the app and scan.</p>
       <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;align-items:center;">
         <span class="btn btn-primary" style="cursor:default;">
           <span class="mono" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;">●&nbsp;In development</span>
@@ -306,13 +398,20 @@
   <div class="wrap">
     <div class="footer-inner">
       <div class="brand">
-        <span class="brand-mark">T</span>
+        <span class="brand-mark">
+          <svg viewBox="0 0 212 221" aria-hidden="true">
+            <g transform="translate(0 221) scale(0.1 -0.1)">
+              <path d="M1420 1904 c-530 -103 -743 -144 -1042 -201 -109 -20 -198 -41 -198 -46 0 -4 8 -6 18 -3 35 10 997 18 987 8 -5 -5 -100 -76 -210 -156 -110 -81 -210 -155 -222 -164 l-22 -17 266 -558 c146 -306 267 -556 268 -555 3 3 -29 181 -135 761 -34 186 -59 344 -57 351 3 8 71 65 152 127 81 63 264 206 408 318 144 112 268 206 275 208 13 5 17 24 5 22 -5 0 -226 -43 -493 -95z"/>
+            </g>
+          </svg>
+        </span>
         <span style="font-size:14px;">TankIt</span>
       </div>
       <div class="footer-links">
-        <a href="index.html">Full site</a>
-        <a href="behind.html">Project</a>
-        <a href="mailto:hello@tankit.app">Contact</a>
+        <a href="behind.html">Behind the build</a>
+        <a href="support.html">Support</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="mailto:tankit@tankit.app">Contact</a>
         <span class="mono">tankit.app</span>
       </div>
     </div>

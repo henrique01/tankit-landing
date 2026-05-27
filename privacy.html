@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>TankIt — Privacy policy</title>
+<meta name="description" content="TankIt does not collect, transmit, or share any personal data. No account, no analytics SDK. Receipt photos and fuel history stay on your iPhone." />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<style>
+  section[id] { scroll-margin-top: 80px; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">
+        <svg viewBox="0 0 212 221" aria-hidden="true">
+          <g transform="translate(0 221) scale(0.1 -0.1)">
+            <path d="M1420 1904 c-530 -103 -743 -144 -1042 -201 -109 -20 -198 -41 -198 -46 0 -4 8 -6 18 -3 35 10 997 18 987 8 -5 -5 -100 -76 -210 -156 -110 -81 -210 -155 -222 -164 l-22 -17 266 -558 c146 -306 267 -556 268 -555 3 3 -29 181 -135 761 -34 186 -59 344 -57 351 3 8 71 65 152 127 81 63 264 206 408 318 144 112 268 206 275 208 13 5 17 24 5 22 -5 0 -226 -43 -493 -95z"/>
+          </g>
+        </svg>
+      </span>
+      <span>TankIt</span>
+      <span class="mono" style="color:var(--ink-faint);font-size:12px;margin-left:6px;">/ privacy</span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">Landing</a>
+      <a href="support.html">Support</a>
+      <a href="behind.html">Behind the build</a>
+      <a class="nav-cta" href="index.html#download">Coming soon</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <article class="prose">
+      <span class="eyebrow">Privacy policy</span>
+      <h1 style="margin-top:14px;">Your fuel data <span class="accent">stays on your phone.</span></h1>
+      <p class="lede">
+        TankIt does not collect, transmit, or share any personal data. There is no account.
+        There is no analytics SDK. Receipt photos and fuel history are stored locally on your
+        iPhone — and stay there.
+      </p>
+
+      <div class="callout">
+        Short version: <strong>we physically can't see your data</strong> because it never leaves your phone.
+      </div>
+
+      <div class="toc">
+        <div class="toc-title">Contents</div>
+        <ol>
+          <li><a href="#stays"><span class="num">01</span>What stays on your iPhone</a></li>
+          <li><a href="#leaves"><span class="num">02</span>What leaves your iPhone</a></li>
+          <li><a href="#permissions"><span class="num">03</span>Permissions</a></li>
+          <li><a href="#manifest"><span class="num">04</span>Apple Privacy Manifest</a></li>
+          <li><a href="#tracking"><span class="num">05</span>No tracking, no ads</a></li>
+          <li><a href="#children"><span class="num">06</span>Children</a></li>
+          <li><a href="#export"><span class="num">07</span>Export &amp; deletion</a></li>
+          <li><a href="#changes"><span class="num">08</span>Changes</a></li>
+          <li><a href="#contact"><span class="num">09</span>Contact</a></li>
+        </ol>
+      </div>
+
+      <section id="stays">
+        <h2><span class="num">01</span>What stays on your iPhone</h2>
+        <p>
+          Everything you put into TankIt is stored in the app's local database on your device,
+          using Apple's <strong>SwiftData</strong> framework. That includes:
+        </p>
+        <ul>
+          <li>Receipt photos you scan or import</li>
+          <li>Fuel entries (volume, price per litre, total, fuel type, date, station)</li>
+          <li>Odometer readings</li>
+          <li>Vehicle information you've entered</li>
+          <li>Your settings and preferences</li>
+        </ul>
+        <p>
+          Small pieces of data — like the latest cheapest-pump result — are shared between the
+          main app and its widgets through an <strong>App Group container</strong>
+          (<code>group.com.tankit.app</code>) on your device. This container never leaves your
+          iPhone either.
+        </p>
+      </section>
+
+      <section id="leaves">
+        <h2><span class="num">02</span>What leaves your iPhone</h2>
+        <p>
+          The only outbound network traffic from TankIt goes to <strong>two official government
+          fuel-price registries</strong>, and only when you open the price finder:
+        </p>
+        <ul>
+          <li><strong>Austria:</strong> the federal energy regulator (<code>api.e-control.at</code>)</li>
+          <li><strong>France:</strong> the open fuel-price dataset (<code>data.economie.gouv.fr</code>)</li>
+        </ul>
+        <p>
+          We send your approximate <strong>GPS coordinate</strong> with each request so the
+          registry can return nearby stations. We do not send any user identifier, device
+          identifier, advertising ID, or anything that would identify you. Coordinates are
+          quantised to a roughly one-kilometre grid for caching and to reduce request volume.
+        </p>
+        <p>
+          We do not operate any servers of our own. There is no TankIt backend, no analytics
+          endpoint, no telemetry collector. Your iPhone talks directly to the two public
+          government APIs above, and nothing else.
+        </p>
+      </section>
+
+      <section id="permissions">
+        <h2><span class="num">03</span>Permissions</h2>
+        <p>The app asks for two iOS permissions, both optional:</p>
+        <ul>
+          <li>
+            <strong>Camera</strong> — to scan fuel receipts.
+            Usage string: <em>"Tank It uses the camera to scan fuel receipts."</em>
+            You can still use the app without granting camera access, by entering fills
+            manually or importing a photo via the share extension.
+          </li>
+          <li>
+            <strong>Location (when in use)</strong> — to find nearby fuel stations.
+            Usage string: <em>"Tank It uses your location to find nearby fuel stations."</em>
+            Without location access the price finder won't work, but every other feature
+            does.
+          </li>
+        </ul>
+        <p>
+          Both permissions can be revoked at any time in iOS Settings → Privacy &amp; Security.
+        </p>
+      </section>
+
+      <section id="manifest">
+        <h2><span class="num">04</span>Apple Privacy Manifest</h2>
+        <p>
+          TankIt ships a <strong>Privacy Manifest</strong> (<code>PrivacyInfo.xcprivacy</code>)
+          declaring exactly which Apple "required-reason" APIs the app touches. All of them are
+          standard iOS plumbing, not data collection:
+        </p>
+        <ul>
+          <li><strong>User Defaults</strong> (reason CA92.1) — storing app settings on your device.</li>
+          <li><strong>File timestamps</strong> (reason C617.1) — reading the dates of files you provide.</li>
+          <li><strong>Disk space</strong> (reason E174.1) — checking that there's room to save a receipt photo.</li>
+          <li><strong>System boot time</strong> (reason 35F9.1) — calculating local elapsed time inside the app.</li>
+        </ul>
+        <p>
+          The manifest declares <code>NSPrivacyTracking</code> as <code>false</code>, with no
+          tracking domains and no collected data types.
+        </p>
+      </section>
+
+      <section id="tracking">
+        <h2><span class="num">05</span>No tracking, no ads</h2>
+        <p>
+          TankIt has no analytics SDK, no crash reporter that phones home, no advertising
+          identifier, no third-party trackers of any kind. We do not use cookies because there
+          is no website session, no account, and no server to log in to.
+        </p>
+        <p>
+          We don't show ads. We never sell or share your data, because we don't have it.
+        </p>
+      </section>
+
+      <section id="children">
+        <h2><span class="num">06</span>Children</h2>
+        <p>
+          TankIt isn't directed at children under 13. It doesn't knowingly collect any
+          information from anyone, so it doesn't knowingly collect information from children
+          either.
+        </p>
+      </section>
+
+      <section id="export">
+        <h2><span class="num">07</span>Export &amp; deletion</h2>
+        <p>
+          Your data is portable. From the Settings screen inside the app you can export:
+        </p>
+        <ul>
+          <li>A <strong>CSV file</strong> with every fill-up.</li>
+          <li>A <strong>ZIP archive</strong> bundling every receipt photo plus the CSV.</li>
+        </ul>
+        <p>
+          To delete everything: delete the app from your iPhone. iOS removes the app's local
+          database, the App Group container, and all associated files. There is nothing on any
+          server to delete, because there is no server.
+        </p>
+      </section>
+
+      <section id="changes">
+        <h2><span class="num">08</span>Changes to this policy</h2>
+        <p>
+          If we ever change how the app handles data, we'll update this page and bump the
+          effective date below. Material changes will also be flagged in the app's release notes.
+        </p>
+      </section>
+
+      <section id="contact">
+        <h2><span class="num">09</span>Contact</h2>
+        <p>
+          Questions about this policy, or anything else about TankIt? Email
+          <a href="mailto:tankit@tankit.app">tankit@tankit.app</a>.
+        </p>
+        <p>
+          TankIt is built by an independent solo developer; responses are best-effort.
+        </p>
+      </section>
+
+      <div class="meta">
+        <strong>Effective date:</strong> 2026-05-27 &nbsp;·&nbsp;
+        Applies to TankIt for iPhone, version 1.0 and later.
+      </div>
+    </article>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 212 221" aria-hidden="true">
+            <g transform="translate(0 221) scale(0.1 -0.1)">
+              <path d="M1420 1904 c-530 -103 -743 -144 -1042 -201 -109 -20 -198 -41 -198 -46 0 -4 8 -6 18 -3 35 10 997 18 987 8 -5 -5 -100 -76 -210 -156 -110 -81 -210 -155 -222 -164 l-22 -17 266 -558 c146 -306 267 -556 268 -555 3 3 -29 181 -135 761 -34 186 -59 344 -57 351 3 8 71 65 152 127 81 63 264 206 408 318 144 112 268 206 275 208 13 5 17 24 5 22 -5 0 -226 -43 -493 -95z"/>
+            </g>
+          </svg>
+        </span>
+        <span style="font-size:14px;">TankIt</span>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Landing</a>
+        <a href="behind.html">Behind the build</a>
+        <a href="support.html">Support</a>
+        <a href="mailto:tankit@tankit.app">Contact</a>
+        <span class="mono">tankit.app/privacy</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

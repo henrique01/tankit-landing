@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <link rel="stylesheet" href="styles.css" />
 <style>
   .bb-hero { padding: 120px 0 64px; }
@@ -113,14 +114,6 @@
   }
   @media (max-width: 700px) { .arch-grid { grid-template-columns: 1fr; } }
 
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 24px; }
-  .chip {
-    font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted);
-    border: 1px solid var(--border-strong); padding: 5px 10px;
-    border-radius: 999px; letter-spacing: 0.04em;
-  }
-  .chip.accent { color: var(--accent); border-color: var(--accent); }
-
   /* Pipeline diagram, drawn with HTML/CSS */
   .pipeline {
     display: grid; grid-template-columns: repeat(4, 1fr);
@@ -181,17 +174,23 @@
 
 <header class="nav">
   <div class="nav-inner">
-    <a class="brand" href="index_short.html">
-      <span class="brand-mark">T</span>
+    <a class="brand" href="index.html">
+      <span class="brand-mark">
+        <svg viewBox="0 0 212 221" aria-hidden="true">
+          <g transform="translate(0 221) scale(0.1 -0.1)">
+            <path d="M1420 1904 c-530 -103 -743 -144 -1042 -201 -109 -20 -198 -41 -198 -46 0 -4 8 -6 18 -3 35 10 997 18 987 8 -5 -5 -100 -76 -210 -156 -110 -81 -210 -155 -222 -164 l-22 -17 266 -558 c146 -306 267 -556 268 -555 3 3 -29 181 -135 761 -34 186 -59 344 -57 351 3 8 71 65 152 127 81 63 264 206 408 318 144 112 268 206 275 208 13 5 17 24 5 22 -5 0 -226 -43 -493 -95z"/>
+          </g>
+        </svg>
+      </span>
       <span>TankIt</span>
       <span class="mono" style="color:var(--ink-faint);font-size:12px;margin-left:6px;">/ behind the build</span>
     </a>
     <nav class="nav-links">
-      <a href="index_short.html">Landing</a>
+      <a href="index.html">Landing</a>
       <a href="#privacy">Privacy</a>
       <a href="#intelligence">On-device AI</a>
       <a href="#apis">APIs</a>
-      <a class="nav-cta" href="index_short.html#download">Coming soon</a>
+      <a class="nav-cta" href="index.html#download">Coming soon</a>
     </nav>
   </div>
 </header>
@@ -203,7 +202,7 @@
       <div class="bb-meta-row">
         <span><strong>TankIt</strong></span>
         <span>Role · Solo</span>
-        <span>Platform · iOS 17+</span>
+        <span>Platform · iOS 18+</span>
         <span>Stack · Swift 6 / SwiftUI</span>
         <span>Year · 2026</span>
       </div>
@@ -288,7 +287,7 @@
           <h3>Structured extraction — LLM + regex pipeline</h3>
           <p>After OCR produces raw text, <code>ExtractionService</code> runs a two-stage pipeline:</p>
           <ul>
-            <li><strong>LLM path (iOS 26+):</strong> Apple&rsquo;s <code>FoundationModels</code> framework (<code>LanguageModelSession</code>) with a <code>@Generable</code> structured output type — the on-device model returns typed fields directly, no string parsing. <code>@Guide</code> annotations steer each field toward the expected format.</li>
+            <li><strong>LLM path (Foundation Models, when available):</strong> Apple&rsquo;s <code>FoundationModels</code> framework (<code>LanguageModelSession</code>) with a <code>@Generable</code> structured output type — the on-device model returns typed fields directly, no string parsing. <code>@Guide</code> annotations steer each field toward the expected format.</li>
             <li><strong>Regex fallback:</strong> A hand-crafted multilingual parser for receipts from French, Austrian, and German stations — covering labelled patterns (<code>Prix/L</code>, <code>Preis/L</code>, <code>GESAMTSUMME</code>, <code>NET À PAYER</code>) and free-form layouts. A derived-value step closes the price triangle: if any one of {total, volume, price/L} is missing but the other two are present, it calculates the third.</li>
           </ul>
 
@@ -374,7 +373,7 @@
           <h3>Intelligence</h3>
           <ul>
             <li><strong>Apple Vision</strong> — on-device OCR &amp; rectangle detection.</li>
-            <li><strong>FoundationModels</strong> — on-device LLM for structured field extraction (iOS 26+).</li>
+            <li><strong>FoundationModels</strong> — on-device LLM for structured field extraction, with a regex fallback when the framework isn&rsquo;t available.</li>
             <li><strong>StoreKit 2</strong> — modern transaction-listener subscription model.</li>
           </ul>
         </section>
@@ -419,7 +418,7 @@
         <section class="chunk" id="platform">
           <h2><span class="num">07</span>Platform &amp; requirements</h2>
           <ul>
-            <li><strong>iOS 17+</strong> (iOS 26+ unlocks the on-device LLM extraction path).</li>
+            <li><strong>iOS 18+</strong>, iPhone only. On-device LLM extraction kicks in where Foundation Models is available; a regex parser handles the rest.</li>
             <li><strong>Xcode 16 / Swift 6</strong>.</li>
             <li>Location permission for price finder (optional — manual address search available).</li>
             <li>Camera permission for receipt scanning (optional — manual entry available).</li>
@@ -436,13 +435,20 @@
   <div class="wrap">
     <div class="footer-inner">
       <div class="brand">
-        <span class="brand-mark">T</span>
+        <span class="brand-mark">
+          <svg viewBox="0 0 212 221" aria-hidden="true">
+            <g transform="translate(0 221) scale(0.1 -0.1)">
+              <path d="M1420 1904 c-530 -103 -743 -144 -1042 -201 -109 -20 -198 -41 -198 -46 0 -4 8 -6 18 -3 35 10 997 18 987 8 -5 -5 -100 -76 -210 -156 -110 -81 -210 -155 -222 -164 l-22 -17 266 -558 c146 -306 267 -556 268 -555 3 3 -29 181 -135 761 -34 186 -59 344 -57 351 3 8 71 65 152 127 81 63 264 206 408 318 144 112 268 206 275 208 13 5 17 24 5 22 -5 0 -226 -43 -493 -95z"/>
+            </g>
+          </svg>
+        </span>
         <span style="font-size:14px;">TankIt</span>
       </div>
       <div class="footer-links">
-        <a href="index_short.html">Landing</a>
-        <a href="#privacy">Privacy</a>
-        <a href="mailto:hello@tankit.app">Contact</a>
+        <a href="index.html">Landing</a>
+        <a href="support.html">Support</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="mailto:tankit@tankit.app">Contact</a>
         <span class="mono">tankit.app/behind</span>
       </div>
     </div>
