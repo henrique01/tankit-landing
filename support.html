@@ -151,7 +151,7 @@
         </p>
         <ul>
           <li>Location services are on for TankIt (iOS Settings → Privacy &amp; Security → Location Services → TankIt → "While Using the App").</li>
-          <li>You're in a supported country. At launch TankIt covers <strong>Austria</strong> and <strong>France</strong>. Other countries will return no results until we add them.</li>
+          <li>You're in a supported country. TankIt covers <strong>Austria</strong>, <strong>France</strong>, and <strong>Australia (NSW &amp; TAS)</strong>. Other countries will return no results until we add them.</li>
         </ul>
         <h3>The cheapest station I see in the app and on its sign don't match</h3>
         <p>
@@ -198,16 +198,24 @@
           You can share the file through the iOS share sheet — AirDrop it to your Mac, save to
           Files, email it, whatever fits.
         </p>
+        <h3>iCloud sync</h3>
+        <p>
+          Turn on iCloud sync in Settings to keep your fill-ups, vehicles and receipt photos in
+          step across your own Apple devices. Sync runs through your <strong>private iCloud
+          account</strong> (Apple CloudKit) — there's no TankIt account or server involved, and
+          we can't see any of it. Leave it off and everything stays on the one device.
+        </p>
         <h3>Backup</h3>
         <p>
-          Because everything is stored locally, your TankIt data is backed up wherever your
-          iPhone is backed up — iCloud or your computer. Restoring an iPhone backup brings
-          TankIt's data back with it.
+          Your TankIt data is backed up wherever your iPhone is backed up — iCloud or your
+          computer. Restoring an iPhone backup brings TankIt's data back with it.
         </p>
         <h3>Deletion</h3>
         <p>
-          Delete the TankIt app. iOS removes the local database, the App Group container, and
-          all receipt photos. There's no server to wipe.
+          To erase everything, use <strong>Settings → Delete All Data</strong> in the app — that
+          clears the local database, the App Group container, and (if sync is on) the copy in your
+          iCloud. With iCloud sync enabled, just deleting the app won't remove the iCloud copy: it
+          would sync back on reinstall, so run Delete All Data or turn sync off first.
         </p>
       </section>
 
@@ -220,9 +228,9 @@
             <p>It depends on the feature:</p>
             <ul>
               <li><strong>Receipt scanner</strong> — works with receipts in <strong>English, German and French</strong>, from stations anywhere. The on-device OCR is tuned for those three languages, so a receipt from Italy or Spain will still scan but field detection is less reliable.</li>
-              <li><strong>Cheapest-pump finder</strong> — live prices are <strong>Austria and France only</strong> at launch, because each country requires wiring up its official government fuel-price feed. More countries are planned as we add feeds.</li>
+              <li><strong>Cheapest-pump finder</strong> — live prices cover <strong>Austria, France, and Australia (NSW &amp; TAS)</strong>, because each country requires wiring up its official government fuel-price feed. More countries are planned as we add feeds.</li>
             </ul>
-            <p>So you can use TankIt to track fill-ups on a road trip across Europe; you just won't get nearby-price suggestions outside AT/FR yet.</p>
+            <p>So you can track fill-ups anywhere; you just won't get nearby-price suggestions outside the supported countries yet.</p>
           </div>
         </details>
 
@@ -236,7 +244,7 @@
         <details>
           <summary>Do I need an account?</summary>
           <div>
-            <p>No. There is no sign-in, no email collection, nothing to remember. Open the app and use it.</p>
+            <p>No. There is no TankIt sign-in, no email collection, nothing to remember — open the app and use it. (Optional iCloud sync uses your own Apple Account, not a TankIt account.)</p>
           </div>
         </details>
 
@@ -257,14 +265,14 @@
         <details>
           <summary>Does the app track me or sell my data?</summary>
           <div>
-            <p>No. There are no analytics SDKs, no advertising IDs, no third-party trackers. The only network calls go to two government price registries, with your GPS coordinate. See the <a href="privacy.html">privacy policy</a> for the full picture.</p>
+            <p>No. There are no analytics SDKs, no advertising IDs, no third-party trackers, and no TankIt account. The only network calls send your location to look up fuel prices — straight to the Austrian and French government feeds, or via a small TankIt proxy for Australia. See the <a href="privacy.html">privacy policy</a> for the full picture.</p>
           </div>
         </details>
 
         <details>
           <summary>Can I track more than one car?</summary>
           <div>
-            <p>The first version of TankIt is built for one vehicle. Multi-vehicle support is on the roadmap as a premium feature.</p>
+            <p>Yes. Your first vehicle is free; tracking additional vehicles is a Premium feature. Each vehicle keeps its own history, efficiency and stats, and you can switch between them from the header on the Home, History and Insights screens.</p>
           </div>
         </details>
 
@@ -294,7 +302,7 @@
       </section>
 
       <div class="meta">
-        <strong>Last updated:</strong> 2026-05-27
+        <strong>Last updated:</strong> 2026-06-07
       </div>
     </article>
   </div>

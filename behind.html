@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>TankIt — Behind the build</title>
-<meta name="description" content="A short walkthrough of how TankIt is built: on-device OCR, on-device LLM extraction, no cloud, two government price APIs." />
+<meta name="description" content="A short walkthrough of how TankIt is built: on-device OCR, on-device LLM extraction, no analytics, and government fuel-price feeds for Austria, France and Australia." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -209,7 +209,7 @@
       <span class="eyebrow">Behind the build</span>
       <h1 style="margin-top:14px;">A fuel tracker that <span class="accent">never phones home.</span></h1>
       <p class="lede">
-        TankIt scans receipts, finds the cheapest pump, and crunches your fuel statistics — and runs <strong>every piece of that intelligence on-device</strong>. The only network calls go to two government price registries. Here&rsquo;s how that&rsquo;s built.
+        TankIt scans receipts, finds the cheapest pump, and crunches your fuel statistics — and runs <strong>every piece of that intelligence on-device</strong>. The only network calls fetch fuel prices — direct to the Austrian and French government feeds, and via a small proxy for Australia. Here&rsquo;s how that&rsquo;s built.
       </p>
 
       <div class="chips" style="margin-top:32px;">
@@ -243,17 +243,17 @@
 
         <section class="chunk" id="overview">
           <h2><span class="num">01</span>Overview</h2>
-          <p>TankIt is a personal fuel management app for drivers in <strong>Austria and France</strong>. The core loop is simple: snap a photo of a fuel receipt, let the app read it automatically, and watch your history, efficiency, and spending build up over time.</p>
+          <p>TankIt is a personal fuel management app for drivers in <strong>Austria, France and Australia</strong>. The core loop is simple: snap a photo of a fuel receipt, let the app read it automatically, and watch your history, efficiency, and spending build up over time.</p>
           <p>On top of that, a <strong>real-time price finder</strong> surfaces the cheapest station near you, and home screen widgets bring key numbers to a glance.</p>
 
           <blockquote>
-            A privacy-first iOS app that turns fuel receipts into spending insights, finds the cheapest nearby station in real time, and stays out of the cloud.
+            A privacy-first iOS app that turns fuel receipts into spending insights, finds the cheapest nearby station in real time, and keeps your data off any TankIt server.
           </blockquote>
 
           <div class="stat-row">
             <div class="stat"><div class="v">0</div><div class="l">third-party SDKs</div></div>
             <div class="stat"><div class="v">100%</div><div class="l">on-device ML</div></div>
-            <div class="stat"><div class="v">2</div><div class="l">countries supported</div></div>
+            <div class="stat"><div class="v">3</div><div class="l">countries supported</div></div>
             <div class="stat"><div class="v">4</div><div class="l">widget variants</div></div>
           </div>
         </section>
@@ -265,12 +265,13 @@
             <li>All ML inference (OCR, rectangle detection, LLM extraction) runs <strong>entirely on-device</strong>.</li>
             <li><strong>No analytics SDK, no crash reporter</strong> that phones home, no user accounts.</li>
             <li>Receipt images are stored locally on your iPhone, <strong>never transmitted</strong>.</li>
-            <li>The only network calls leave the device for the two government price APIs — and only your GPS coordinate goes with them.</li>
+            <li>The only network calls fetch fuel prices — direct to the Austrian and French government APIs, and via a small TankIt proxy for Australia — carrying just your GPS coordinate.</li>
+            <li>Optional <strong>iCloud sync</strong> mirrors your data across your own devices through your private iCloud (CloudKit) — never a TankIt server.</li>
             <li>You can export the entire dataset (CSV + ZIP of receipts) at any time. Nothing to lock in.</li>
           </ul>
 
           <div class="pull">
-            We physically can&rsquo;t see your data <span class="accent">because it never leaves your phone.</span>
+            We physically can&rsquo;t see your data <span class="accent">— no TankIt account, no TankIt server holds it.</span>
           </div>
         </section>
 
@@ -324,7 +325,7 @@
 
         <section class="chunk" id="apis">
           <h2><span class="num">04</span>External APIs</h2>
-          <p>The only outbound traffic from TankIt: two <strong>official government fuel price registries</strong>. No third-party data brokers, no scraping.</p>
+          <p>Outbound traffic from TankIt fetches fuel prices from <strong>official government data</strong> — no third-party data brokers, no scraping. Austria and France are queried directly; Australia goes through a small TankIt proxy.</p>
 
           <div class="country-pair">
             <div class="c">
@@ -338,6 +339,12 @@
               <h4>data.economie.gouv.fr</h4>
               <p>French government&rsquo;s open fuel-price dataset, queried via ODS v2.1 spatial filter — up to 20 stations within 5 km in one request.</p>
               <span class="src">data.economie.gouv.fr/api/explore/v2.1/…/prix-des-carburants-en-france-flux-instantane-v2</span>
+            </div>
+            <div class="c">
+              <span class="flag">AU · Australia</span>
+              <h4>NSW &amp; TAS</h4>
+              <p>Official state government price feeds, relayed through a TankIt-operated Cloudflare Worker (the feeds need API keys that can&rsquo;t ship in an app). Each request carries an Apple App Attest assertion.</p>
+              <span class="src">tankit-fuel-proxy · App Attest gated</span>
             </div>
           </div>
 
@@ -361,13 +368,14 @@
           <ul>
             <li><strong>Swift 6</strong> — strict concurrency throughout (<code>@MainActor</code>, <code>Sendable</code>, structured tasks).</li>
             <li><strong>SwiftUI</strong> — 100% declarative UI; the only UIKit view controller is the camera viewfinder.</li>
-            <li><strong>WidgetKit</strong> — four widget types (small + medium for both price finder and efficiency).</li>
+            <li><strong>WidgetKit</strong> — four widgets: Cheapest Nearby, Quick Capture, Fuel Consumption, and Consumption + Capture.</li>
           </ul>
 
           <h3>Persistence</h3>
           <ul>
             <li><strong>SwiftData</strong> — model layer (<code>FuelEntry</code>, <code>Vehicle</code>) with <code>@Model</code> annotations, relationship rules, and reverse-index queries.</li>
-            <li><strong>UserDefaults (App Group)</strong> — shared container <code>group.com.tankit.app</code> for passing live data between the main app and widgets without a server round-trip.</li>
+            <li><strong>SwiftData + CloudKit</strong> — optional iCloud sync mirrors the store to the user&rsquo;s private CloudKit database; no TankIt server in the path.</li>
+            <li><strong>UserDefaults (App Group)</strong> — shared container <code>group.com.tankit.shared</code> for passing live data between the main app and widgets without a server round-trip.</li>
           </ul>
 
           <h3>Intelligence</h3>
