@@ -32,7 +32,6 @@
     <nav class="nav-links">
       <a href="index.html">Landing</a>
       <a href="support.html">Support</a>
-      <a href="behind.html">Behind the build</a>
       <a class="nav-cta" href="index.html#download">Coming soon</a>
     </nav>
   </div>
@@ -63,7 +62,7 @@
           <li><a href="#manifest"><span class="num">04</span>Apple Privacy Manifest</a></li>
           <li><a href="#tracking"><span class="num">05</span>No tracking, no ads</a></li>
           <li><a href="#children"><span class="num">06</span>Children</a></li>
-          <li><a href="#export"><span class="num">07</span>Export &amp; deletion</a></li>
+          <li><a href="#export"><span class="num">07</span>Export</a></li>
           <li><a href="#changes"><span class="num">08</span>Changes</a></li>
           <li><a href="#contact"><span class="num">09</span>Contact</a></li>
         </ol>
@@ -72,8 +71,7 @@
       <section id="stays">
         <h2><span class="num">01</span>What stays on your devices</h2>
         <p>
-          Everything you put into TankIt is stored in the app's local database on your device,
-          using Apple's <strong>SwiftData</strong> framework. That includes:
+          Everything you put into TankIt is stored inside the app on your device. That includes:
         </p>
         <ul>
           <li>Receipt photos you scan or import</li>
@@ -83,22 +81,19 @@
           <li>Your settings and preferences</li>
         </ul>
         <p>
-          Small pieces of data — like the latest cheapest-pump result — are shared between the
-          main app and its widgets through an <strong>App Group container</strong>
-          (<code>group.com.tankit.shared</code>) on your device. This container never leaves your
-          iPhone either.
+          Small pieces of data — like the latest cheapest-pump result — are shared with the app's
+          widgets on your device. That never leaves your iPhone either.
         </p>
 
         <h3>iCloud sync (optional)</h3>
         <p>
           If you turn on <strong>iCloud sync</strong> in Settings, your fuel entries, vehicles
-          and receipt photos are kept in step across your own Apple devices through your
-          <strong>private iCloud account</strong>, using Apple's <strong>CloudKit</strong>. That
-          data lives in your iCloud — governed by
+          and receipt photos are kept in step across your own Apple devices through your own
+          <strong>iCloud</strong> account. That data lives in your iCloud — governed by
           <a href="https://www.apple.com/legal/privacy/">Apple's privacy policy</a> — and TankIt
-          has no way to read it. There is no TankIt account and no TankIt server anywhere in the
-          sync path: it goes from your device, to your iCloud, to your other devices. Sync is
-          optional; leave it off and everything stays on the single device.
+          has no way to read it. Nothing goes to a TankIt server: it syncs from your device, to
+          your iCloud, to your other devices. Sync is optional; leave it off and everything stays
+          on the one device.
         </p>
       </section>
 
@@ -106,35 +101,31 @@
         <h2><span class="num">02</span>What leaves your device</h2>
         <p>
           When you open the price finder, TankIt sends your <strong>location</strong> to look up
-          nearby fuel prices. Depending on the country, the request goes to one of three places:
+          nearby fuel prices. Depending on the country, that goes to one of three places:
         </p>
         <ul>
-          <li><strong>Austria:</strong> directly to the federal energy regulator (<code>api.e-control.at</code>).</li>
-          <li><strong>France:</strong> directly to the open government fuel-price dataset (<code>data.economie.gouv.fr</code>).</li>
-          <li><strong>Australia (NSW &amp; TAS):</strong> through a small TankIt-operated proxy
-            (a Cloudflare Worker) that forwards your location to the official Australian
-            government price feeds and returns the results.</li>
+          <li><strong>Austria:</strong> the official government fuel-price service (E-Control).</li>
+          <li><strong>France:</strong> the official open government fuel-price data.</li>
+          <li><strong>Australia (NSW &amp; TAS):</strong> a small TankIt service, hosted on
+            Cloudflare, that looks the prices up from the official Australian government data on
+            your behalf.</li>
         </ul>
         <p>
-          We send your <strong>GPS coordinate</strong> so the feed can return stations near you.
-          We do not send any user identifier, advertising ID, account, or anything that would
-          identify you. For caching and to keep request volume low, lookups are grouped to a
-          roughly one-kilometre grid.
+          We send your <strong>location</strong> so the service can return stations near you —
+          nothing that identifies you (no name, no account, no advertising ID). Your location is
+          rounded to roughly a one-kilometre area.
         </p>
         <p>
-          <strong>Why the Australian proxy exists:</strong> the Australian feeds require API
-          credentials that can't be safely shipped inside an app, so those requests pass through
-          our proxy instead of going direct. The proxy only relays the price lookup — it never
-          receives your fuel entries, receipts, or identity, and it is not an analytics or
-          tracking endpoint. To stop automated abuse of that endpoint, each Australian request
-          carries a one-time <strong>Apple App Attest</strong> assertion proving it came from a
-          genuine, unmodified copy of TankIt. App Attest confirms app integrity with Apple; it is
-          not an advertising identifier and cannot be used to identify you.
+          For Australia, prices go through that small TankIt service rather than directly, because
+          the government data needs a key we can't safely put inside the app. The service only
+          relays the price lookup — it never receives your fuel data, receipts, or identity. Each
+          request includes a standard Apple security check (App Attest) that confirms it's really
+          coming from the TankIt app and not a bot; it can't be used to identify you.
         </p>
         <p>
-          Apart from these price lookups (and iCloud sync, if you enable it), TankIt has no
-          backend: no analytics endpoint, no telemetry collector, and no TankIt server that ever
-          receives your fuel data, receipts, or identity.
+          Apart from these price lookups (and iCloud sync, if you turn it on), nothing else leaves
+          your device. There's no analytics, no tracking, and no TankIt server that ever receives
+          your fuel data, receipts, or identity.
         </p>
       </section>
 
@@ -163,19 +154,11 @@
       <section id="manifest">
         <h2><span class="num">04</span>Apple Privacy Manifest</h2>
         <p>
-          TankIt ships a <strong>Privacy Manifest</strong> (<code>PrivacyInfo.xcprivacy</code>)
-          declaring exactly which Apple "required-reason" APIs the app touches. All of them are
-          standard iOS plumbing, not data collection:
-        </p>
-        <ul>
-          <li><strong>User Defaults</strong> (reason CA92.1) — storing app settings on your device.</li>
-          <li><strong>File timestamps</strong> (reason C617.1) — reading the dates of files you provide.</li>
-          <li><strong>Disk space</strong> (reason E174.1) — checking that there's room to save a receipt photo.</li>
-          <li><strong>System boot time</strong> (reason 35F9.1) — calculating local elapsed time inside the app.</li>
-        </ul>
-        <p>
-          The manifest declares <code>NSPrivacyTracking</code> as <code>false</code>, with no
-          tracking domains and no collected data types.
+          TankIt includes Apple's <strong>Privacy Manifest</strong> — a formal declaration,
+          checked by the App Store, that the app <strong>does not track you</strong> and collects
+          no data. The handful of system features it uses (such as saving your settings or
+          checking there's room to store a receipt photo) are ordinary iOS housekeeping, not data
+          collection.
         </p>
       </section>
 
@@ -201,7 +184,7 @@
       </section>
 
       <section id="export">
-        <h2><span class="num">07</span>Export &amp; deletion</h2>
+        <h2><span class="num">07</span>Export</h2>
         <p>
           Your data is portable. From the Settings screen inside the app you can export:
         </p>
@@ -209,16 +192,6 @@
           <li>A <strong>CSV file</strong> with every fill-up.</li>
           <li>A <strong>ZIP archive</strong> bundling every receipt photo plus the CSV.</li>
         </ul>
-        <p>
-          To erase everything, use <strong>Settings → Delete All Data</strong> inside the app.
-          That clears the local database and the App Group container, and — if iCloud sync is on
-          — removes the synced copy from your iCloud too.
-        </p>
-        <p>
-          Note that with iCloud sync enabled, simply deleting the app does <strong>not</strong>
-          remove your data from iCloud — it would sync back if you reinstall. To wipe it, run
-          Delete All Data first, or turn off iCloud sync before deleting the app.
-        </p>
       </section>
 
       <section id="changes">
@@ -263,7 +236,6 @@
       </div>
       <div class="footer-links">
         <a href="index.html">Landing</a>
-        <a href="behind.html">Behind the build</a>
         <a href="support.html">Support</a>
         <a href="mailto:tankit@tankit.app">Contact</a>
         <span class="mono">tankit.app/privacy</span>
